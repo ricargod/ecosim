@@ -95,8 +95,29 @@ int main()
         // Clear the entity grid
         entity_grid.clear();
         entity_grid.assign(NUM_ROWS, std::vector<entity_t>(NUM_ROWS, { empty, 0, 0}));
-        
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dis(0, 14);
+        int linha = dis(gen);
+        int coluna = dis(gen);
         // Create the entities
+        for(uint32_t i=0;i<(uint32_t)request_body["plants"];i++){
+            //cria as planta
+            
+            while (!entity_grid[linha][coluna].type==empty){
+                int linha = dis(gen);
+                int coluna = dis(gen); 
+            }
+            entity_grid[linha][coluna].type=plant;
+            entity_grid[linha][coluna].age=0;
+        }
+        for(uint32_t i=0;i<(uint32_t)request_body["herbivores"];i++){
+            //cria os coelho
+
+        }
+        for(uint32_t i=0;i<(uint32_t)request_body["carnivores"];i++){
+            //cria os leao
+        }
         // <YOUR CODE HERE>
 
         // Return the JSON representation of the entity grid
