@@ -75,7 +75,7 @@ namespace nlohmann
 
 // Grid that contains the entities
 static std::vector<std::vector<entity_t>> entity_grid;
-
+std::vector<std::pair<int, int>> pares_analisados;
 int main()
 {
     crow::SimpleApp app;
@@ -154,47 +154,62 @@ int main()
         
         // <YOUR CODE HERE>
         //Analisa todas as casas
+        
+        bool analisada=false;
         for(uint32_t i=0;i<NUM_ROWS;i++){
             for(uint32_t j=0;j<NUM_ROWS;j++){
-                //SE FOR PLANTA
-                if (entity_grid[i][j].type==plant){
-                    //se for velha morre
-                    if (entity_grid[i][j].age==10){
-                        entity_grid[i][j].type=empty;
-                        entity_grid[i][j].energy=0;
-                        entity_grid[i][j].age=0;
-                    }else{
-                        entity_grid[i][j].age++;
-                        if (random_action(PLANT_REPRODUCTION_PROBABILITY)) {
-                            //analisa casas adjacentes e coloca as disponiveis em um vetor
-                            std::cout << "Test.\n";
-                            //entity_grid[i-1][j]=entity_grid[i][j];
-                            std::vector<entity_t> pode;
+                //verifica se a casa ja foi analisada
+                analisada=false;
+                for (int k=0;k<pares_analisados.size();k++){
+                    if (pares_analisados[k].first==i && pares_analisados[k].second==j){
+                        analisada=true;
+                    }
+                }
+                
+                //caso nao tenha sido analisada
+                if (!analisada){
+                    //SE FOR PLANTA
+                    if (entity_grid[i][j].type==plant){
+                        //se for velha morre
+                        if (entity_grid[i][j].age==10){
+                            entity_grid[i][j].type=empty;
+                            entity_grid[i][j].energy=0;
+                            entity_grid[i][j].age=0;
+                        }else{
+                            entity_grid[i][j].age++;
+                            if (random_action(PLANT_REPRODUCTION_PROBABILITY)) {
+                                //analisa casas adjacentes e coloca as disponiveis em um vetor
+                                std::cout << "Test.\n";
+                                std::vector<std::pair<int, int>> posicoes_disponiveis;
 
-                            // if (entity_grid[i+1][j].type==empty && i+1<NUM_ROWS){
-                            //     pode.push_back(entity_grid[i+1][j]);
-                            // }
-                            // if (entity_grid[i-1][j].type==empty && i-1>=0){
-                            //     pode.push_back(entity_grid[i-1][j]);
-                            // }
-                            // if (entity_grid[i][j+1].type==empty&& j+1<NUM_ROWS){
-                            //     pode.push_back(entity_grid[i][j+1]);
-                            // }
-                            if (entity_grid[i][j-1].type==empty&& j-1>=0){
-                                pode.push_back(entity_grid[i][j-1]);
-                            }
-                            if (!pode.empty()){
-                                std::uniform_int_distribution<> dis(1, pode.size());
-                                std::cout <<dis(gen)<< "\n";
-                                pode[dis(gen)].type=plant;
-                                pode.clear();
-                                //entity_grid[i][j-1].type=plant;
-                            }
-                        } 
+                                if (entity_grid[i+1][j].type==empty && i+1<NUM_ROWS){
+                                    posicoes_disponiveis.push_back(std::make_pair(i+1, j));
+                                }
+                                if (entity_grid[i-1][j].type==empty && i-1>=0){
+                                    posicoes_disponiveis.push_back(std::make_pair(i-1, j));
+                                }
+                                if (entity_grid[i][j+1].type==empty && j+1<NUM_ROWS){
+                                    posicoes_disponiveis.push_back(std::make_pair(i, j+1));
+                                }
+                                if (entity_grid[i][j-1].type==empty && j-1>=0){
+                                    posicoes_disponiveis.push_back(std::make_pair(i, j-1));
+                                }
+                                if (!posicoes_disponiveis.empty()){
+                                    std::uniform_int_distribution<> dis(0, posicoes_disponiveis.size()-1);
+                                    int sorteio = dis(gen);
+                                    int x=posicoes_disponiveis[sorteio].first;
+                                    int y=posicoes_disponiveis[sorteio].second;
+                                    std::cout<<sorteio<<"\n"<<x<<"\n"<<y<<"\n";
+                                    entity_grid[x][y].type = plant;
+                                    pares_analisados.push_back(std::make_pair(x, y));
+                                }
+                            } 
+                        }
                     }
                 }
             }
         }
+        pares_analisados.clear();
         // Return the JSON representation of the entity grid
         nlohmann::json json_grid = entity_grid; 
         return json_grid.dump(); });
