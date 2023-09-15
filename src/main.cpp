@@ -76,6 +76,7 @@ namespace nlohmann
 // Grid that contains the entities
 static std::vector<std::vector<entity_t>> entity_grid;
 std::vector<std::pair<int, int>> pares_analisados;
+std::vector<std::pair<int, int>> posicoes_disponiveis;
 int main()
 {
     crow::SimpleApp app;
@@ -180,28 +181,49 @@ int main()
                             if (random_action(PLANT_REPRODUCTION_PROBABILITY)) {
                                 //analisa casas adjacentes e coloca as disponiveis em um vetor
                                 std::cout << "Test.\n";
-                                std::vector<std::pair<int, int>> posicoes_disponiveis;
-
-                                if (entity_grid[i+1][j].type==empty && i+1<NUM_ROWS){
-                                    posicoes_disponiveis.push_back(std::make_pair(i+1, j));
+                                if((i+1)<NUM_ROWS){
+                                    if (entity_grid[i+1][j].type==empty){
+                                        posicoes_disponiveis.push_back(std::make_pair(i+1, j));
+                                        std::cout << "Test1.\n"<<i<<"\n"<<j<<"\n";
+                                    }
                                 }
-                                if (entity_grid[i-1][j].type==empty && i-1>=0){
-                                    posicoes_disponiveis.push_back(std::make_pair(i-1, j));
+                                
+                                std::cout << "Test2.\n"<<i<<"\n"<<j<<"\n";
+                                if (i>0){
+                                    if (entity_grid[i-1][j].type==empty){
+                                        posicoes_disponiveis.push_back(std::make_pair(i-1, j));
+                                        std::cout << "Test3.\n"<<i<<"\n"<<j<<"\n";
+                                    }
+                                }else{
+                                    std::cout<<"Extra";
                                 }
-                                if (entity_grid[i][j+1].type==empty && j+1<NUM_ROWS){
-                                    posicoes_disponiveis.push_back(std::make_pair(i, j+1));
+                                
+                                std::cout << "Test4.\n"<<i<<"\n"<<j<<"\n";
+                                if ((j+1)<NUM_ROWS){
+                                    if (entity_grid[i][j+1].type==empty){
+                                        posicoes_disponiveis.push_back(std::make_pair(i, j+1));
+                                        std::cout << "Test5.\n"<<i<<"\n"<<j<<"\n";
+                                    }
                                 }
-                                if (entity_grid[i][j-1].type==empty && j-1>=0){
-                                    posicoes_disponiveis.push_back(std::make_pair(i, j-1));
+                                std::cout << "Test6.\n"<<i<<"\n"<<j<<"\n";
+                                if(j>0){
+                                    if (entity_grid[i][j-1].type==empty){
+                                        posicoes_disponiveis.push_back(std::make_pair(i, j-1));
+                                        std::cout << "Test7.\n"<<i<<"\n"<<j<<"\n";
+                                    }
+                                }else{
+                                    std::cout<<"Extra";
                                 }
+                                std::cout << "Test8.\n"<<i<<"\n"<<j<<"\n";
                                 if (!posicoes_disponiveis.empty()){
                                     std::uniform_int_distribution<> dis(0, posicoes_disponiveis.size()-1);
                                     int sorteio = dis(gen);
                                     int x=posicoes_disponiveis[sorteio].first;
                                     int y=posicoes_disponiveis[sorteio].second;
-                                    std::cout<<sorteio<<"\n"<<x<<"\n"<<y<<"\n";
+                                    std::cout<<"sorteio"<<sorteio<<"\n"<<x<<"\n"<<y<<"\n";
                                     entity_grid[x][y].type = plant;
                                     pares_analisados.push_back(std::make_pair(x, y));
+                                    posicoes_disponiveis.clear();
                                 }
                             } 
                         }
