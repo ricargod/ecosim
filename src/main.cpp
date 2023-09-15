@@ -3,6 +3,7 @@
 
 #include "crow_all.h"
 #include "json.hpp"
+#include <iostream>
 #include <random>
 
 static const uint32_t NUM_ROWS = 15;
@@ -45,6 +46,16 @@ struct entity_t
     int32_t age;
 };
 
+static std::random_device rd;
+static std::mt19937 gen(rd());
+//FUNÇÕES
+// Function to generate a random action based on probability
+bool random_action(float probability) {
+    //static std::random_device rd;
+    //static std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0.0, 1.0);
+    return dis(gen) < probability;
+}
 // Auxiliary code to convert the entity_type_t enum to a string
 NLOHMANN_JSON_SERIALIZE_ENUM(entity_type_t, {
                                                 {empty, " "},
@@ -95,28 +106,37 @@ int main()
         // Clear the entity grid
         entity_grid.clear();
         entity_grid.assign(NUM_ROWS, std::vector<entity_t>(NUM_ROWS, { empty, 0, 0}));
-        static std::random_device rd;
-        static std::mt19937 gen(rd());
         std::uniform_int_distribution<> dis(0, 14);
         int linha = dis(gen);
         int coluna = dis(gen);
         // Create the entities
         for(uint32_t i=0;i<(uint32_t)request_body["plants"];i++){
             //cria as planta
-            
             while (!entity_grid[linha][coluna].type==empty){
-                int linha = dis(gen);
-                int coluna = dis(gen); 
+                linha = dis(gen);
+                coluna = dis(gen); 
             }
             entity_grid[linha][coluna].type=plant;
             entity_grid[linha][coluna].age=0;
         }
         for(uint32_t i=0;i<(uint32_t)request_body["herbivores"];i++){
             //cria os coelho
+            while (!entity_grid[linha][coluna].type==empty){
+                linha = dis(gen);
+                coluna = dis(gen); 
+            }
+            entity_grid[linha][coluna].type=herbivore;
+            entity_grid[linha][coluna].age=0;
 
         }
         for(uint32_t i=0;i<(uint32_t)request_body["carnivores"];i++){
             //cria os leao
+            while (!entity_grid[linha][coluna].type==empty){
+                linha = dis(gen);
+                coluna = dis(gen); 
+            }
+            entity_grid[linha][coluna].type=carnivore;
+            entity_grid[linha][coluna].age=0;
         }
         // <YOUR CODE HERE>
 
@@ -133,7 +153,48 @@ int main()
         // Iterate over the entity grid and simulate the behaviour of each entity
         
         // <YOUR CODE HERE>
-        
+        //Analisa todas as casas
+        for(uint32_t i=0;i<NUM_ROWS;i++){
+            for(uint32_t j=0;j<NUM_ROWS;j++){
+                //SE FOR PLANTA
+                if (entity_grid[i][j].type==plant){
+                    //se for velha morre
+                    if (entity_grid[i][j].age==10){
+                        entity_grid[i][j].type=empty;
+                        entity_grid[i][j].energy=0;
+                        entity_grid[i][j].age=0;
+                    }else{
+                        entity_grid[i][j].age++;
+                        if (random_action(PLANT_REPRODUCTION_PROBABILITY)) {
+                            //analisa casas adjacentes e coloca as disponiveis em um vetor
+                            std::cout << "Test.\n";
+                            //entity_grid[i-1][j]=entity_grid[i][j];
+                            std::vector<entity_t> pode;
+
+                            // if (entity_grid[i+1][j].type==empty && i+1<NUM_ROWS){
+                            //     pode.push_back(entity_grid[i+1][j]);
+                            // }
+                            // if (entity_grid[i-1][j].type==empty && i-1>=0){
+                            //     pode.push_back(entity_grid[i-1][j]);
+                            // }
+                            // if (entity_grid[i][j+1].type==empty&& j+1<NUM_ROWS){
+                            //     pode.push_back(entity_grid[i][j+1]);
+                            // }
+                            if (entity_grid[i][j-1].type==empty&& j-1>=0){
+                                pode.push_back(entity_grid[i][j-1]);
+                            }
+                            if (!pode.empty()){
+                                std::uniform_int_distribution<> dis(1, pode.size());
+                                std::cout <<dis(gen)<< "\n";
+                                pode[dis(gen)].type=plant;
+                                pode.clear();
+                                //entity_grid[i][j-1].type=plant;
+                            }
+                        } 
+                    }
+                }
+            }
+        }
         // Return the JSON representation of the entity grid
         nlohmann::json json_grid = entity_grid; 
         return json_grid.dump(); });
