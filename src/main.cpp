@@ -289,6 +289,139 @@ int main()
                                         posicoes_disponiveis.push_back(std::make_pair(i+1, j));
                                         std::cout << "Test1.\n"<<i<<"\n"<<j<<"\n";
                                     }
+                                    if (entity_grid[i+1][j].type==plant){
+                                        if(random_action(HERBIVORE_EAT_PROBABILITY)){
+                                            entity_grid[i+1][j].type=empty;
+                                            entity_grid[i+1][j].age=0;
+                                            entity_grid[i+1][j].energy=entity_grid[i][j].energy+30;
+                                        }
+                                    }
+                                }
+                                std::cout << "Test2.\n"<<i<<"\n"<<j<<"\n";
+                                if (i>0){
+                                    if (entity_grid[i-1][j].type==empty){
+                                        posicoes_disponiveis.push_back(std::make_pair(i-1, j));
+                                        std::cout << "Test3.\n"<<i<<"\n"<<j<<"\n";
+                                    }
+                                    if (entity_grid[i-1][j].type==plant){
+                                        if(random_action(HERBIVORE_EAT_PROBABILITY)){
+                                            entity_grid[i-1][j].type=empty;
+                                            entity_grid[i-1][j].age=0;
+                                            entity_grid[i-1][j].energy=entity_grid[i][j].energy+30;
+                                        }
+                                    }
+                                }
+                                std::cout << "Test4.\n"<<i<<"\n"<<j<<"\n";
+                                if ((j+1)<NUM_ROWS){
+                                    if (entity_grid[i][j+1].type==empty){
+                                        posicoes_disponiveis.push_back(std::make_pair(i, j+1));
+                                        std::cout << "Test5.\n"<<i<<"\n"<<j<<"\n";
+                                    }
+                                    if (entity_grid[i][j+1].type==plant){
+                                        if(random_action(HERBIVORE_EAT_PROBABILITY)){
+                                            entity_grid[i][j+1].type=empty;
+                                            entity_grid[i][j+1].age=0;
+                                            entity_grid[i][j].energy=entity_grid[i][j].energy+30;
+                                        }
+                                    }
+                                }
+                                std::cout << "Test6.\n"<<i<<"\n"<<j<<"\n";
+                                if(j>0){
+                                    if (entity_grid[i][j-1].type==empty){
+                                        posicoes_disponiveis.push_back(std::make_pair(i, j-1));
+                                        std::cout << "Test7.\n"<<i<<"\n"<<j<<"\n";
+                                    }
+                                    if (entity_grid[i][j-1].type==plant){
+                                        if(random_action(HERBIVORE_EAT_PROBABILITY)){
+                                            entity_grid[i][j-1].type=empty;
+                                            entity_grid[i][j-1].age=0;
+                                            entity_grid[i][j].energy=entity_grid[i][j].energy+30;
+                                        }
+                                    }
+                                }
+                                std::cout << "Test8.\n"<<i<<"\n"<<j<<"\n";
+                                if (!posicoes_disponiveis.empty()){
+                                    std::uniform_int_distribution<> dis(0, posicoes_disponiveis.size()-1);
+                                    int sorteio = dis(gen);
+                                    int x=posicoes_disponiveis[sorteio].first;
+                                    int y=posicoes_disponiveis[sorteio].second;
+                                    std::cout<<"sorteio"<<sorteio<<"\n"<<x<<"\n"<<y<<"\n";
+
+                                    entity_grid[x][y].type = herbivore;
+                                    entity_grid[x][y].age=entity_grid[i][j].age;
+                                    entity_grid[x][y].energy=entity_grid[i][j].energy-5; 
+                                    //limpa a antiga
+                                    entity_grid[i][j].type=empty;
+                                    entity_grid[i][j].age=0;
+                                    entity_grid[i][j].energy=0;
+                                    pares_analisados.push_back(std::make_pair(x, y));
+                                    posicoes_disponiveis.clear();
+                                }
+                            }
+                            // if (random_action(HERBIVORE_EAT_PROBABILITY)){
+                            //     //analisa casas adjacentes e coloca as disponiveis em um vetor
+                            //     std::cout << "Test.\n";
+                            //     if((i+1)<NUM_ROWS){
+                            //         if (entity_grid[i+1][j].type==plant){
+                            //             posicoes_disponiveis.push_back(std::make_pair(i+1, j));
+                            //             std::cout << "Test1.\n"<<i<<"\n"<<j<<"\n";
+                            //         }
+                            //     }
+                            //     std::cout << "Test2.\n"<<i<<"\n"<<j<<"\n";
+                            //     if (i>0){
+                            //         if (entity_grid[i-1][j].type==plant){
+                            //             posicoes_disponiveis.push_back(std::make_pair(i-1, j));
+                            //             std::cout << "Test3.\n"<<i<<"\n"<<j<<"\n";
+                            //         }
+                            //     }
+                            //     std::cout << "Test4.\n"<<i<<"\n"<<j<<"\n";
+                            //     if ((j+1)<NUM_ROWS){
+                            //         if (entity_grid[i][j+1].type==plant){
+                            //             posicoes_disponiveis.push_back(std::make_pair(i, j+1));
+                            //             std::cout << "Test5.\n"<<i<<"\n"<<j<<"\n";
+                            //         }
+                            //     }
+                            //     std::cout << "Test6.\n"<<i<<"\n"<<j<<"\n";
+                            //     if(j>0){
+                            //         if (entity_grid[i][j-1].type==plant){
+                            //             posicoes_disponiveis.push_back(std::make_pair(i, j-1));
+                            //             std::cout << "Test7.\n"<<i<<"\n"<<j<<"\n";
+                            //         }
+                            //     }
+                            //     std::cout << "Test8.\n"<<i<<"\n"<<j<<"\n";
+                            //     if (!posicoes_disponiveis.empty()){
+                            //         std::uniform_int_distribution<> dis(0, posicoes_disponiveis.size()-1);
+                            //         int sorteio = dis(gen);
+                            //         int x=posicoes_disponiveis[sorteio].first;
+                            //         int y=posicoes_disponiveis[sorteio].second;
+                            //         std::cout<<"sorteio"<<sorteio<<"\n"<<x<<"\n"<<y<<"\n";
+
+                            //         entity_grid[x][y].type = empty;
+                            //         entity_grid[x][y].age=0;
+                            //         entity_grid[x][y].energy=0;
+                                    
+                            //         entity_grid[i][j].energy=entity_grid[i][j].energy+30;
+                            //         pares_analisados.push_back(std::make_pair(x, y));
+                            //     }
+                            // }
+                        }
+
+                    }else if (entity_grid[i][j].type==carnivore){
+                        if (entity_grid[i][j].age==100|| entity_grid[i][j].energy<=0){
+                            entity_grid[i][j].type=empty;
+                            entity_grid[i][j].energy=0;
+                            entity_grid[i][j].age=0;
+                        }else{
+                            entity_grid[i][j].age++;
+                            //REPRODUÇÃO
+                            if (random_action(CARNIVORE_REPRODUCTION_PROBABILITY) && entity_grid[i][j].energy>=20) {
+                                //analisa casas adjacentes e coloca as disponiveis em um vetor
+                                std::cout << "Test.\n";
+                                if((i+1)<NUM_ROWS){
+                                    if (entity_grid[i+1][j].type==empty){
+                                        posicoes_disponiveis.push_back(std::make_pair(i+1, j));
+                                        std::cout << "Test1.\n"<<i<<"\n"<<j<<"\n";
+                                    }
                                 }
                                 std::cout << "Test2.\n"<<i<<"\n"<<j<<"\n";
                                 if (i>0){
@@ -318,59 +451,77 @@ int main()
                                     int x=posicoes_disponiveis[sorteio].first;
                                     int y=posicoes_disponiveis[sorteio].second;
                                     std::cout<<"sorteio"<<sorteio<<"\n"<<x<<"\n"<<y<<"\n";
-
-                                    entity_grid[x][y].type = herbivore;
-                                    entity_grid[x][y].age=entity_grid[i][j].age;
-                                    entity_grid[x][y].energy=entity_grid[i][j].energy-5; 
-                                    //limpa a antiga
-                                    entity_grid[i][j].type=empty;
-                                    entity_grid[i][j].age=0;
-                                    entity_grid[i][j].energy=0;
+                                    //reproduz
+                                    entity_grid[x][y].type = carnivore;
+                                    entity_grid[x][y].energy=100;
+                                    entity_grid[x][y].age=0;
+                                    //perde energia
+                                    entity_grid[i][j].energy=entity_grid[i][j].energy-10;
                                     pares_analisados.push_back(std::make_pair(x, y));
                                     posicoes_disponiveis.clear();
-                                    //se tiver plantinha pro coelho comer
-                                    if (entity_grid[x][y].type==plant){
-                                        if(random_action(HERBIVORE_EAT_PROBABILITY)){
-                                            entity_grid[x][y].type = herbivore;
-                                            entity_grid[x][y].age=entity_grid[i][j].age;
-                                            entity_grid[x][y].energy=entity_grid[i][j].energy+25; //ganhou 30 de comer e perdeu 5 do movimento
-                                            //limpa a posição antiga
-                                            entity_grid[i][j].type=empty;
-                                            entity_grid[i][j].age=0;
-                                            entity_grid[i][j].energy=0;
-                                            pares_analisados.push_back(std::make_pair(x, y));
-                                        }
-                                    }
                                 }
                             }
-                            if (random_action(HERBIVORE_EAT_PROBABILITY)){
+                            //MOVIMENTAÇÃO
+                            if (random_action(CARNIVORE_MOVE_PROBABILITY)) {
                                 //analisa casas adjacentes e coloca as disponiveis em um vetor
                                 std::cout << "Test.\n";
                                 if((i+1)<NUM_ROWS){
-                                    if (entity_grid[i+1][j].type==plant){
+                                    if (entity_grid[i+1][j].type==empty){
                                         posicoes_disponiveis.push_back(std::make_pair(i+1, j));
                                         std::cout << "Test1.\n"<<i<<"\n"<<j<<"\n";
+                                    }
+                                    if (entity_grid[i+1][j].type==herbivore){
+                                        if(random_action(CARNIVORE_EAT_PROBABILITY)){
+                                            entity_grid[i+1][j].type=empty;
+                                            entity_grid[i+1][j].age=0;
+                                            entity_grid[i+1][j].energy=0;
+                                            entity_grid[i][j].energy= entity_grid[i][j].energy+30;
+                                        }
                                     }
                                 }
                                 std::cout << "Test2.\n"<<i<<"\n"<<j<<"\n";
                                 if (i>0){
-                                    if (entity_grid[i-1][j].type==plant){
+                                    if (entity_grid[i-1][j].type==empty){
                                         posicoes_disponiveis.push_back(std::make_pair(i-1, j));
                                         std::cout << "Test3.\n"<<i<<"\n"<<j<<"\n";
+                                    }
+                                    if (entity_grid[i-1][j].type==herbivore){
+                                        if(random_action(HERBIVORE_EAT_PROBABILITY)){
+                                            entity_grid[i-1][j].type=empty;
+                                            entity_grid[i-1][j].age=0;
+                                            entity_grid[i-1][j].energy=0;
+                                            entity_grid[i][j].energy= entity_grid[i][j].energy+30;
+                                        }
                                     }
                                 }
                                 std::cout << "Test4.\n"<<i<<"\n"<<j<<"\n";
                                 if ((j+1)<NUM_ROWS){
-                                    if (entity_grid[i][j+1].type==plant){
+                                    if (entity_grid[i][j+1].type==empty){
                                         posicoes_disponiveis.push_back(std::make_pair(i, j+1));
                                         std::cout << "Test5.\n"<<i<<"\n"<<j<<"\n";
+                                    }
+                                    if (entity_grid[i][j+1].type==herbivore){
+                                        if(random_action(HERBIVORE_EAT_PROBABILITY)){
+                                            entity_grid[i][j+1].type=empty;
+                                            entity_grid[i][j+1].age=0;
+                                            entity_grid[i][j+1].energy=0;
+                                            entity_grid[i][j].energy= entity_grid[i][j].energy+30;
+                                        }
                                     }
                                 }
                                 std::cout << "Test6.\n"<<i<<"\n"<<j<<"\n";
                                 if(j>0){
-                                    if (entity_grid[i][j-1].type==plant){
+                                    if (entity_grid[i][j-1].type==empty){
                                         posicoes_disponiveis.push_back(std::make_pair(i, j-1));
                                         std::cout << "Test7.\n"<<i<<"\n"<<j<<"\n";
+                                    }
+                                    if (entity_grid[i][j-1].type==herbivore){
+                                        if(random_action(HERBIVORE_EAT_PROBABILITY)){
+                                            entity_grid[i][j-1].type=empty;
+                                            entity_grid[i][j-1].age=0;
+                                            entity_grid[i][j-1].energy=0;
+                                            entity_grid[i][j].energy= entity_grid[i][j].energy+30;
+                                        }
                                     }
                                 }
                                 std::cout << "Test8.\n"<<i<<"\n"<<j<<"\n";
@@ -381,19 +532,66 @@ int main()
                                     int y=posicoes_disponiveis[sorteio].second;
                                     std::cout<<"sorteio"<<sorteio<<"\n"<<x<<"\n"<<y<<"\n";
 
-                                    entity_grid[x][y].type = empty;
-                                    entity_grid[x][y].age=0;
-                                    entity_grid[x][y].energy=0;
-                                    
-                                    entity_grid[i][j].energy=entity_grid[i][j].energy+30;
+                                    entity_grid[x][y].type = carnivore;
+                                    entity_grid[x][y].age=entity_grid[i][j].age;
+                                    entity_grid[x][y].energy=entity_grid[i][j].energy-5; 
+                                    //limpa a antiga
+                                    entity_grid[i][j].type=empty;
+                                    entity_grid[i][j].age=0;
+                                    entity_grid[i][j].energy=0;
                                     pares_analisados.push_back(std::make_pair(x, y));
+                                    posicoes_disponiveis.clear();
                                 }
                             }
+                            // if (random_action(HERBIVORE_EAT_PROBABILITY)){
+                            //     //analisa casas adjacentes e coloca as disponiveis em um vetor
+                            //     std::cout << "Test.\n";
+                            //     if((i+1)<NUM_ROWS){
+                            //         if (entity_grid[i+1][j].type==plant){
+                            //             posicoes_disponiveis.push_back(std::make_pair(i+1, j));
+                            //             std::cout << "Test1.\n"<<i<<"\n"<<j<<"\n";
+                            //         }
+                            //     }
+                            //     std::cout << "Test2.\n"<<i<<"\n"<<j<<"\n";
+                            //     if (i>0){
+                            //         if (entity_grid[i-1][j].type==plant){
+                            //             posicoes_disponiveis.push_back(std::make_pair(i-1, j));
+                            //             std::cout << "Test3.\n"<<i<<"\n"<<j<<"\n";
+                            //         }
+                            //     }
+                            //     std::cout << "Test4.\n"<<i<<"\n"<<j<<"\n";
+                            //     if ((j+1)<NUM_ROWS){
+                            //         if (entity_grid[i][j+1].type==plant){
+                            //             posicoes_disponiveis.push_back(std::make_pair(i, j+1));
+                            //             std::cout << "Test5.\n"<<i<<"\n"<<j<<"\n";
+                            //         }
+                            //     }
+                            //     std::cout << "Test6.\n"<<i<<"\n"<<j<<"\n";
+                            //     if(j>0){
+                            //         if (entity_grid[i][j-1].type==plant){
+                            //             posicoes_disponiveis.push_back(std::make_pair(i, j-1));
+                            //             std::cout << "Test7.\n"<<i<<"\n"<<j<<"\n";
+                            //         }
+                            //     }
+                            //     std::cout << "Test8.\n"<<i<<"\n"<<j<<"\n";
+                            //     if (!posicoes_disponiveis.empty()){
+                            //         std::uniform_int_distribution<> dis(0, posicoes_disponiveis.size()-1);
+                            //         int sorteio = dis(gen);
+                            //         int x=posicoes_disponiveis[sorteio].first;
+                            //         int y=posicoes_disponiveis[sorteio].second;
+                            //         std::cout<<"sorteio"<<sorteio<<"\n"<<x<<"\n"<<y<<"\n";
+
+                            //         entity_grid[x][y].type = empty;
+                            //         entity_grid[x][y].age=0;
+                            //         entity_grid[x][y].energy=0;
+                                    
+                            //         entity_grid[i][j].energy=entity_grid[i][j].energy+30;
+                            //         pares_analisados.push_back(std::make_pair(x, y));
+                            //     }
+                            // }
                         }
 
-                    }//else if (entity_grid[i][j].type==carnivore){
-
-                    //}
+                     }
                 }
             }
         }
